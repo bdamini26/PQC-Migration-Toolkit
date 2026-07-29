@@ -1,0 +1,17 @@
+# Core
+cryptography==46.0.6
+qiskit==2.5.1
+qiskit-aer==0.17.2
+
+# Post-quantum algorithms (pure-Python, spec-conformant NIST FIPS 203 / 204)
+kyber-py==1.2.0
+dilithium-py==1.4.0
+pycryptodome>=3.20        # needed by kyber-py / dilithium-py for seeded DRBG generation
+
+# Optional: only needed for Day 26 live hardware execution.
+# Uncomment and install if you have an IBM Quantum account and token.
+# qiskit-ibm-runtime==0.48.0
+
+# Testing
+pytest==9.1.1
+pytest-cov==7.1.0

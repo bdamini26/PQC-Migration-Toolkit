@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Generated at runtime -- never commit real audit output or private keys
+output/*.json
+!output/.gitkeep
+
+# Sample fixtures are fine to keep, but never commit real production keys
+# scanned from elsewhere on disk.
+
+.venv/
+venv/
+*.egg-info/

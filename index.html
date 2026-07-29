@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PQC Migration Audit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="title-block">
+      <h1>PQC MIGRATION AUDIT</h1>
+      <p class="subtitle">Cybersecurity Runtime Map — quantum-safe migration & audit trail viewer</p>
+    </div>
+    <div class="meta-block">
+      <div class="meta-row"><span>AUDIT ID</span><b id="metaAuditId">—</b></div>
+      <div class="meta-row"><span>BUILD</span><b id="metaBuild">—</b></div>
+    </div>
+  </header>
+
+  <!-- CONTROL BAR -->
+  <section class="control-bar">
+    <div class="control-label">
+      <span class="dot"></span>
+      <span id="datasetStatus">No audit dataset loaded — showing empty state. Import the JSON file (import_audit_report.json) to populate this view.</span>
+    </div>
+    <div class="control-actions">
+      <label class="btn btn-primary" for="fileInput">Import Dataset</label>
+      <input type="file" id="fileInput" accept="application/json" hidden>
+      <button class="btn" id="loadSampleBtn">Load Sample</button>
+      <button class="btn" id="resetBtn">New Scan</button>
+    </div>
+  </section>
+
+  <!-- STAT CARDS -->
+  <section class="stats">
+    <div class="stat-card critical">
+      <div class="stat-value" id="statCritical">0</div>
+      <div class="stat-label">CRITICAL RISK</div>
+    </div>
+    <div class="stat-card high">
+      <div class="stat-value" id="statHigh">0</div>
+      <div class="stat-label">HIGH RISK</div>
+    </div>
+    <div class="stat-card migrated-risk">
+      <div class="stat-value" id="statMigratedRisk">0</div>
+      <div class="stat-label">MIGRATED RISK</div>
+    </div>
+    <div class="stat-card migrated-keys">
+      <div class="stat-value" id="statMigratedKeys">0</div>
+      <div class="stat-label">MIGRATED KEYS</div>
+    </div>
+  </section>
+
+  <!-- SECTION 01: QUANTUM ENTROPY CIRCUIT -->
+  <section class="panel">
+    <h2><span class="idx">01</span> QUANTUM ENTROPY CIRCUIT</h2>
+    <div class="circuit-row">
+      <div class="circuit-diagram">
+        <svg viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg">
+          <line x1="20" y1="40" x2="240" y2="40" stroke="#4a7196" stroke-width="1.5"/>
+          <line x1="20" y1="100" x2="240" y2="100" stroke="#4a7196" stroke-width="1.5"/>
+          <text x="4" y="44" fill="#8fb3d6" font-size="11" font-family="monospace">q0</text>
+          <text x="4" y="104" fill="#8fb3d6" font-size="11" font-family="monospace">q1</text>
+
+          <rect x="55" y="24" width="32" height="32" fill="#0e2340" stroke="#5fd0e0" stroke-width="1.5"/>
+          <text x="63" y="45" fill="#5fd0e0" font-size="15" font-family="monospace">H</text>
+
+          <line x1="140" y1="40" x2="140" y2="100" stroke="#4a7196" stroke-width="1.5"/>
+          <circle cx="140" cy="40" r="5" fill="#5fd0e0"/>
+          <circle cx="140" cy="100" r="9" fill="none" stroke="#5fd0e0" stroke-width="1.5"/>
+          <line x1="140" y1="93" x2="140" y2="107" stroke="#5fd0e0" stroke-width="1.5"/>
+          <line x1="133" y1="100" x2="147" y2="100" stroke="#5fd0e0" stroke-width="1.5"/>
+
+          <rect x="190" y="24" width="30" height="32" fill="#0e2340" stroke="#e0a458" stroke-width="1.5"/>
+          <text x="196" y="45" fill="#e0a458" font-size="12" font-family="monospace">M</text>
+          <rect x="190" y="84" width="30" height="32" fill="#0e2340" stroke="#e0a458" stroke-width="1.5"/>
+          <text x="196" y="105" fill="#e0a458" font-size="12" font-family="monospace">M</text>
+        </svg>
+        <div class="circuit-caption">2-qubit circuit · Hadamard + CNOT · entangled seed generation</div>
+      </div>
+      <div class="circuit-desc">
+        <ul>
+          <li>A pair of qubits is placed into superposition with a Hadamard gate, then entangled with a CNOT so measurement outcomes are correlated but not classically predictable.</li>
+          <li>The circuit is sampled repeatedly on the simulator (or hardware, when a QPU token is available) to accumulate a raw entropy bitstream.</li>
+          <li>Hybrid key generation feeds that bitstream into the classical KEM seed derivation step, so the trustworthiness of the seed — not raw bit volume — carries the security margin.</li>
+          <li>Since the circuit only needs a trustworthy seed rather than a wall of random bits, it stays intentionally minimal: 2 qubits are enough to trace the signal path end to end.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 02: KEY INVENTORY & RISK ASSESSMENT -->
+  <section class="panel">
+    <h2><span class="idx">02</span> KEY INVENTORY &amp; RISK ASSESSMENT</h2>
+    <div class="table-wrap">
+      <table id="riskTable">
+        <thead>
+          <tr>
+            <th>KEY FILE</th>
+            <th>ALGORITHM</th>
+            <th>KEY SIZE</th>
+            <th>EST. UPGRADE</th>
+            <th>RISK LEVEL</th>
+            <th>PQC READY</th>
+          </tr>
+        </thead>
+        <tbody id="riskTableBody">
+          <tr class="empty-row">
+            <td colspan="6">No keys scanned yet. Load or import an audit session to populate this table.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 03: MIGRATED POST-QUANTUM KEY MATERIAL -->
+  <section class="panel">
+    <h2><span class="idx">03</span> MIGRATED POST-QUANTUM KEY MATERIAL</h2>
+    <div class="table-wrap">
+      <table id="migratedTable">
+        <thead>
+          <tr>
+            <th>KEY FILE</th>
+            <th>KEM SCHEME</th>
+            <th>SIGNATURE SCHEME</th>
+            <th>KEY FINGERPRINT</th>
+          </tr>
+        </thead>
+        <tbody id="migratedTableBody">
+          <tr class="empty-row">
+            <td colspan="4">No keys migrated yet. Run the migration engine, then import its output to populate this table.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Quantum Cryptography Migration Toolkit — offline dashboard · runs entirely in this browser · no data ever leaves this machine
+  </footer>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
